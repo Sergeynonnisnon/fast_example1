@@ -1,30 +1,20 @@
-import websocket
-import _thread
+import asyncio
 import time
-import rel
+import timeit
+from time import sleep
+import websockets
 
 
+async def get_work():
+    async with websockets.connect("ws://localhost:2000/ws") as websocket:
+        a = 0
+        f = open("bla", "a+")
+        t = time.time()
+        for _ in range(100000):
+            await websocket.recv()
+        print(time.time() - t)
+        f.close()
+        await websocket.close()
 
-def on_message(ws, message):
-    print(message)
-    #TODO here will be collecting metrics
 
-
-def on_error(ws, error):
-    print(error)
-
-def on_close(ws, close_status_code, close_msg):
-    print("### closed ###")
-
-def on_open(ws):
-    print("Opened connection")
-
-if __name__ == "__main__":
-    websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://localhost:2000/ws",
-                              on_open=on_open,
-                              on_message=on_message,
-                              on_error=on_error,
-                              on_close=on_close)
-
-    ws.run_forever(reconnect=5)
+asyncio.run(get_work())

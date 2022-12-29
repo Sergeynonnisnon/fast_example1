@@ -1,18 +1,19 @@
 import json
 import asyncio
 import random
-
+from timeit import timeit
+import os, psutil
 from fastapi import FastAPI
 from fastapi import WebSocket
+import time
 
 app = FastAPI()
-# AGREGATE BATH TO SEND DATA
-some_metrics_0001_sec = ([random.randint(1, 100) for i in range(1000)] for _ in range(10000))
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    process = psutil.Process(os.getpid())
     while True:
-        await asyncio.sleep(0.0001)
-        await websocket.send_json(next(some_metrics_0001_sec ))
+        await websocket.send_json(
+            [process.memory_info().rss, process.cpu_percent(), process.username(), process.connections()])
