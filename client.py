@@ -7,6 +7,8 @@ import rel
 
 def on_message(ws, message):
     print(message)
+    #TODO here will be collecting metrics
+
 
 def on_error(ws, error):
     print(error)
